@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calculadora de Cartera Sugerida</title>
+<meta name="description" content="Te dice qué comprar o vender para que tu cartera quede como la sugerida. Desarrollada por Ignacio Burd.">
+<meta name="theme-color" content="#15213f">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icono-192.png">
+<link rel="apple-touch-icon" href="icono-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cartera Sugerida">
+<style>
+  :root {
+    --azul: #15213f; --azul2: #24345e; --amarillo: #ecd71a; --crema: #fff8cc;
+    --verde: #0a7d32; --rojo: #b3261e; --gris: #6b7280; --linea: #e3e6eb; --fondo: #f4f5f7; --blanco: #fff;
+    --texto: #1f2937; --ambar: #8a5a00; --ambar-bg: #fff3cd;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--fondo); color: var(--texto);
+    font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-text-size-adjust: 100%; }
+  button, input, select { font: inherit; }
+  .cont { max-width: 760px; margin: 0 auto; padding: 0 14px 24px; }
+
+  /* Encabezado */
+  header { background: var(--blanco); border-top: 5px solid var(--amarillo); box-shadow: 0 1px 0 var(--linea); }
+  header .cont { display: flex; align-items: center; gap: 12px; padding-top: 10px; padding-bottom: 10px; }
+  header img { height: 26px; }
+  header .sep { width: 1px; height: 30px; background: var(--linea); }
+  header h1 { font-size: 16px; line-height: 1.15; margin: 0; color: var(--azul); flex: 1; }
+  header h1 small { display: block; font-weight: 400; color: var(--gris); font-size: 12px; }
+  .icono-btn { border: 1px solid var(--linea); background: var(--blanco); color: var(--azul); border-radius: 10px;
+    width: 40px; height: 40px; font-weight: 700; cursor: pointer; flex: none; }
+
+  /* Guía */
+  .guia { background: var(--crema); color: var(--azul); font-weight: 600; padding: 10px 14px; font-size: 14px;
+    border-bottom: 1px solid #f1e6a0; }
+  .guia .cont { padding: 0; }
+
+  /* Pasos */
+  .paso { background: var(--blanco); border: 2px solid var(--linea); border-radius: 14px; padding: 14px; margin-top: 12px; }
+  .paso.actual { border-color: var(--amarillo); box-shadow: 0 0 0 3px #f7ee9d55; }
+  .paso h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 4px; font-size: 16px; color: var(--azul); }
+  .num { width: 28px; height: 28px; border-radius: 8px; background: var(--gris); color: #fff; display: grid;
+    place-items: center; font-size: 15px; flex: none; }
+  .paso.actual .num { background: var(--azul); }
+  .paso.hecho .num { background: var(--verde); }
+  .ayuda { color: var(--gris); font-size: 13px; margin: 0 0 10px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 10px;
+    padding: 11px 16px; font-weight: 700; cursor: pointer; background: var(--azul); color: #fff; min-height: 44px; }
+  .btn:active { transform: translateY(1px); }
+  .btn.sec { background: var(--blanco); color: var(--azul); border: 1px solid var(--linea); }
+  .btn.calc { background: var(--amarillo); color: var(--azul); width: 100%; font-size: 17px; min-height: 52px; margin-top: 12px; }
+  .btn[disabled] { opacity: .5; cursor: default; }
+  input[type=file] { display: none; }
+  .estado { font-size: 13px; margin-top: 10px; color: var(--gris); white-space: pre-line; }
+  .estado.ok { color: var(--verde); }
+  .estado.alerta { color: var(--ambar); }
+  .estado.error { color: var(--rojo); }
+  .barra { height: 6px; background: var(--linea); border-radius: 3px; overflow: hidden; margin-top: 8px; display: none; }
+  .barra > i { display: block; height: 100%; width: 0; background: var(--azul); transition: width .2s; }
+
+  .monto { display: flex; align-items: center; gap: 8px; border: 1px solid #cfd4dc; border-radius: 10px;
+    padding: 0 12px; background: #fff; }
+  .monto span { font-weight: 700; color: var(--azul); font-size: 20px; }
+  .monto input { border: 0; outline: 0; font-size: 22px; padding: 10px 0; width: 100%; min-width: 0; background: transparent; }
+  .modos { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+  .modos label { border: 1px solid #cfd4dc; border-radius: 10px; padding: 9px 10px; font-size: 13px; cursor: pointer;
+    background: #fff; }
+  .modos input { display: none; }
+  .modos label b { display: block; font-size: 14px; color: var(--azul); }
+  .modos label:has(input:checked) { border-color: var(--azul); background: #eef1f8; box-shadow: inset 0 0 0 1px var(--azul); }
+
+  /* Resultados */
+  .seccion { background: var(--blanco); border-radius: 14px; padding: 14px; margin-top: 14px; border: 1px solid var(--linea); }
+  .seccion > h2 { margin: 0 0 4px; font-size: 17px; color: var(--azul); }
+  .orden { display: grid; grid-template-columns: auto 1fr auto; gap: 2px 12px; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid var(--linea); }
+  .orden:last-child { border-bottom: 0; }
+  .tag { font-size: 12px; font-weight: 800; padding: 4px 8px; border-radius: 6px; grid-row: span 2; text-align: center; min-width: 74px; }
+  .tag.c { background: #e7f5ec; color: var(--verde); }
+  .tag.v { background: #fbeaea; color: var(--rojo); }
+  .tag.n { background: #f1f2f4; color: var(--gris); }
+  .tag.s { background: var(--ambar-bg); color: var(--ambar); }
+  .orden .tk { font-weight: 800; font-size: 16px; color: var(--azul); }
+  .orden .tk small { font-weight: 500; color: var(--gris); font-size: 12px; margin-left: 4px; }
+  .orden .cant { font-weight: 800; font-size: 16px; text-align: right; }
+  .orden .det { font-size: 12px; color: var(--gris); }
+  .orden .monto-op { font-size: 13px; text-align: right; color: var(--texto); }
+  .resumen { background: #f7f8fa; border-radius: 10px; padding: 10px 12px; font-size: 14px; margin-top: 10px;
+    display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; }
+  .resumen b { text-align: right; }
+  .acciones { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+
+  /* Revisar */
+  details.seccion > summary { cursor: pointer; font-weight: 700; color: var(--azul); font-size: 16px; list-style: none; }
+  details.seccion > summary::-webkit-details-marker { display: none; }
+  details.seccion > summary::after { content: "▾"; float: right; color: var(--gris); }
+  details[open].seccion > summary::after { content: "▴"; }
+  .avisos { font-size: 12.5px; color: var(--ambar); margin: 8px 0; }
+  .avisos div { margin: 2px 0; }
+  .fila { border: 1px solid var(--linea); border-radius: 10px; padding: 10px; margin-top: 8px; }
+  .fila.sinprecio { background: var(--ambar-bg); border-color: #f0dd99; }
+  .fila .cab { display: flex; align-items: center; gap: 8px; }
+  .fila .cab b { color: var(--azul); font-size: 15px; }
+  .fila .cab .tipo { font-size: 12px; color: var(--gris); }
+  .fila .cab button { margin-left: auto; border: 0; background: none; color: var(--gris); font-size: 20px; cursor: pointer; }
+  .campos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px; }
+  .campos label { font-size: 11px; color: var(--gris); }
+  .campos input { width: 100%; border: 1px solid #cfd4dc; border-radius: 8px; padding: 7px 8px; font-size: 14px; text-align: right; }
+  .suma { font-weight: 700; font-size: 13px; margin-top: 10px; }
+  .agregar { display: flex; gap: 6px; margin-top: 12px; }
+  .agregar input { flex: 1; border: 1px solid #cfd4dc; border-radius: 10px; padding: 10px; text-transform: uppercase; min-width: 0; }
+  .opc { display: grid; gap: 10px; margin-top: 8px; font-size: 14px; }
+  .opc input[type=text] { width: 90px; border: 1px solid #cfd4dc; border-radius: 8px; padding: 7px; text-align: right; }
+
+  footer { text-align: center; font-size: 12px; color: var(--gris); margin-top: 22px; }
+  footer b { color: var(--azul); }
+  footer .precios { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; }
+  footer button { border: 1px solid var(--linea); background: #fff; border-radius: 8px; padding: 5px 10px; cursor: pointer; color: var(--azul); }
+
+  /* Ayuda */
+  dialog { border: 0; border-radius: 16px; padding: 0; max-width: 520px; width: calc(100% - 24px); }
+  dialog::backdrop { background: #0008; }
+  .dlg { padding: 18px; }
+  .dlg img { height: 28px; }
+  .dlg h3 { color: var(--azul); margin: 10px 0 6px; }
+  .dlg .p { display: flex; gap: 10px; margin: 10px 0; }
+  .dlg .p .num { background: var(--azul); }
+  .dlg .p div b { color: var(--azul); }
+  .dlg .p div p { margin: 2px 0 0; font-size: 13.5px; }
+  .dlg .nota { font-size: 12px; color: var(--gris); }
+  .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--azul); color: #fff;
+    padding: 10px 16px; border-radius: 10px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 9; }
+  .toast.ver { opacity: 1; }
+  .oculto { display: none !important; }
+  @media (min-width: 700px) { header h1 { font-size: 19px; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="cont">
+    <img src="logo_pin.png" alt="PIN Capital" onerror="this.remove();document.querySelector('header .sep')?.remove()">
+    <div class="sep"></div>
+    <h1>Calculadora de Cartera Sugerida<small>Qué comprar o vender para quedar como la sugerida</small></h1>
+    <button class="icono-btn" id="btnAyuda" aria-label="Cómo se usa">?</button>
+  </div>
+</header>
+<div class="guia"><div class="cont" id="guia">Cargando…</div></div>
+
+<main class="cont">
+  <!-- Paso 1 -->
+  <section class="paso" id="paso1">
+    <h2><span class="num">1</span>Cartera sugerida</h2>
+    <p class="ayuda">Subí el PDF con la cartera sugerida que te manda PIN (por mail o WhatsApp).</p>
+    <label class="btn" for="inPdf">📄 Elegir PDF</label>
+    <input type="file" id="inPdf" accept="application/pdf,.pdf">
+    <div class="estado" id="est1">Pendiente</div>
+  </section>
+
+  <!-- Paso 2 -->
+  <section class="paso" id="paso2">
+    <h2><span class="num">2</span>Tu cartera hoy</h2>
+    <p class="ayuda">En la app de tu broker abrí tu <b>Portfolio</b> y sacá una captura de pantalla donde se vean los tickers y sus montos en pesos. Si no entra todo, sacá varias y elegilas juntas.</p>
+    <label class="btn" for="inCap">🖼️ Elegir captura(s)</label>
+    <input type="file" id="inCap" accept="image/*" multiple>
+    <div class="barra" id="barra2"><i></i></div>
+    <div class="estado" id="est2">Pendiente</div>
+  </section>
+
+  <!-- Paso 3 -->
+  <section class="paso" id="paso3">
+    <h2><span class="num">3</span>¿Cuánto vas a invertir?</h2>
+    <div class="monto"><span>$</span><input id="inMonto" inputmode="numeric" placeholder="0" autocomplete="off"></div>
+    <div class="modos">
+      <label><input type="radio" name="modo" value="comprar" checked><b>Solo comprar</b>Usa la plata nueva, no vende nada.</label>
+      <label><input type="radio" name="modo" value="rebalancear"><b>Comprar y vender</b>Deja cada activo en su %.</label>
+    </div>
+    <button class="btn calc" id="btnCalc">▶ CALCULAR</button>
+  </section>
+
+  <!-- Resultado -->
+  <section class="seccion oculto" id="secRes">
+    <h2>✅ Qué hacer</h2>
+    <p class="ayuda" style="margin:0">Cargá estas órdenes en tu broker. Bonos y ONs van en valor nominal (VN).</p>
+    <div id="ordenes"></div>
+    <div class="resumen" id="resumen"></div>
+    <div class="acciones">
+      <button class="btn" id="btnCompartir">📤 Compartir</button>
+      <button class="btn sec" id="btnCopiar">📋 Copiar</button>
+    </div>
+  </section>
+
+  <!-- Revisar -->
+  <details class="seccion" id="secRev">
+    <summary>✏️ Revisar / corregir lo leído</summary>
+    <p class="ayuda" style="margin-top:8px">Si algo se leyó mal, corregilo acá. Las filas amarillas no tienen precio de mercado: cargalo a mano con el precio que ves en tu broker.</p>
+    <div class="avisos" id="avisos"></div>
+    <div id="filas"></div>
+    <div class="suma" id="suma"></div>
+    <div class="agregar">
+      <input id="inAgregar" list="catalogo" placeholder="Agregar activo (ej. GGAL)" autocomplete="off">
+      <datalist id="catalogo"></datalist>
+      <button class="btn sec" id="btnAgregar">Agregar</button>
+    </div>
+    <div class="opc">
+      <b style="color:var(--azul)">Opciones</b>
+      <label>Comisión del broker: <input type="text" id="inCom" inputmode="decimal"> %</label>
+      <label><input type="checkbox" id="inUltimo"> Usar último precio operado (por defecto: punta vendedora, lo que pagás al comprar)</label>
+      <button class="btn sec" id="btnBorrar" style="justify-self:start">Empezar de cero</button>
+    </div>
+  </details>
+
+  <footer>
+    <div class="precios"><span id="estPrecios">Cargando precios…</span><button id="btnPrecios">⟳</button></div>
+    <div><b>Desarrollada por Ignacio Burd</b></div>
+    <div>Herramienta independiente, no oficial de PIN Capital. No es una recomendación de inversión.</div>
+    <div>Precios: data912.com (pueden tener demora). Tus archivos no salen de tu dispositivo.</div>
+  </footer>
+</main>
+
+<dialog id="dlgAyuda">
+  <div class="dlg">
+    <img src="logo_pin.png" alt="" onerror="this.remove()">
+    <h3>Cómo se usa</h3>
+    <div class="p"><span class="num">1</span><div><b>Cartera sugerida</b><p>Tocá «Elegir PDF» y abrí el informe de cartera que te manda PIN.</p></div></div>
+    <div class="p"><span class="num">2</span><div><b>Tu cartera hoy</b><p>Sacá una captura de tu Portfolio en la app del broker y elegila con «Elegir captura(s)». Si no entra todo, sacá varias.</p></div></div>
+    <div class="p"><span class="num">3</span><div><b>Cuánto invertís</b><p>Escribí el monto, elegí «Solo comprar» o «Comprar y vender» y tocá CALCULAR.</p></div></div>
+    <div class="p"><span class="num">✓</span><div><b>Qué hacer</b><p>Te muestra cuántos papeles comprar o vender de cada uno. Compartilo o copialo y cargalo en tu broker.</p></div></div>
+    <p class="nota">Tip: agregala a la pantalla de inicio (menú del navegador → «Agregar a pantalla de inicio») y se abre como una app.</p>
+    <p class="nota">Herramienta independiente, no oficial de PIN Capital. No es una recomendación de inversión. Revisá precios y cantidades en tu broker antes de confirmar.<br><b style="color:var(--azul)">Desarrollada por Ignacio Burd</b></p>
+    <button class="btn" id="btnCerrarAyuda" style="width:100%">Entendido</button>
+  </div>
+</dialog>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
