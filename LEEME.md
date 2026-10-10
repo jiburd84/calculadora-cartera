@@ -3,11 +3,11 @@
 
 Es la misma calculadora de la versión de PC, pero hecha como página web. Funciona en el navegador del celular (Android o iPhone) y de la compu, y se puede agregar a la pantalla de inicio para abrirla como una app.
 
-> Herramienta independiente, no oficial de PIN Capital. No es una recomendación de inversión.
+> Herramienta independiente, sin relación con ningún broker. No es una recomendación de inversión.
 
 ## Archivos
 - `index.html`, `app.js`, `nucleo.js`: la app.
-- `logo_pin.png`, `icono-192.png`, `icono-512.png`, `manifest.json`: el logo, el ícono y lo necesario para "Agregar a pantalla de inicio".
+- `logo_jib.png`, `icono-192.png`, `icono-512.png`, `manifest.json`: el logo, el ícono y lo necesario para "Agregar a pantalla de inicio".
 - `CalculadoraCarteraSugerida.html`: la misma app en **un solo archivo**. Sirve si preferís subir un solo archivo.
 - `construir.py`: regenera el archivo único si cambiás el código.
 

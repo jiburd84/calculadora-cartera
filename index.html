@@ -10,7 +10,7 @@
 <link rel="icon" href="icono-192.png">
 <link rel="apple-touch-icon" href="icono-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Cartera Sugerida">
+<meta name="apple-mobile-web-app-title" content="Cartera JIB">
 <style>
   :root {
     --azul: #15213f; --azul2: #24345e; --amarillo: #ecd71a; --crema: #fff8cc;
@@ -26,7 +26,7 @@
   /* Encabezado */
   header { background: var(--blanco); border-top: 5px solid var(--amarillo); box-shadow: 0 1px 0 var(--linea); }
   header .cont { display: flex; align-items: center; gap: 12px; padding-top: 10px; padding-bottom: 10px; }
-  header img { height: 26px; }
+  header img { height: 34px; }
   header .sep { width: 1px; height: 30px; background: var(--linea); }
   header h1 { font-size: 16px; line-height: 1.15; margin: 0; color: var(--azul); flex: 1; }
   header h1 small { display: block; font-weight: 400; color: var(--gris); font-size: 12px; }
@@ -124,7 +124,7 @@
   dialog { border: 0; border-radius: 16px; padding: 0; max-width: 520px; width: calc(100% - 24px); }
   dialog::backdrop { background: #0008; }
   .dlg { padding: 18px; }
-  .dlg img { height: 28px; }
+  .dlg img { height: 40px; }
   .dlg h3 { color: var(--azul); margin: 10px 0 6px; }
   .dlg .p { display: flex; gap: 10px; margin: 10px 0; }
   .dlg .p .num { background: var(--azul); }
@@ -141,7 +141,7 @@
 <body>
 <header>
   <div class="cont">
-    <img src="logo_pin.png" alt="PIN Capital" onerror="this.remove();document.querySelector('header .sep')?.remove()">
+    <img src="logo_jib.png" alt="JIB · José Ignacio Burd" onerror="this.remove();document.querySelector('header .sep')?.remove()">
     <div class="sep"></div>
     <h1>Calculadora de Cartera Sugerida<small>Qué comprar o vender para quedar como la sugerida</small></h1>
     <button class="icono-btn" id="btnAyuda" aria-label="Cómo se usa">?</button>
@@ -153,7 +153,7 @@
   <!-- Paso 1 -->
   <section class="paso" id="paso1">
     <h2><span class="num">1</span>Cartera sugerida</h2>
-    <p class="ayuda">Subí el PDF con la cartera sugerida que te manda PIN (por mail o WhatsApp).</p>
+    <p class="ayuda">Subí el PDF con la cartera sugerida que te manda tu broker (por mail o WhatsApp).</p>
     <label class="btn" for="inPdf">📄 Elegir PDF</label>
     <input type="file" id="inPdf" accept="application/pdf,.pdf">
     <div class="estado" id="est1">Pendiente</div>
@@ -215,21 +215,21 @@
   <footer>
     <div class="precios"><span id="estPrecios">Cargando precios…</span><button id="btnPrecios">⟳</button></div>
     <div><b>Desarrollada por Ignacio Burd</b></div>
-    <div>Herramienta independiente, no oficial de PIN Capital. No es una recomendación de inversión.</div>
+    <div>Herramienta independiente, sin relación con ningún broker. No es una recomendación de inversión.</div>
     <div>Precios: data912.com (pueden tener demora). Tus archivos no salen de tu dispositivo.</div>
   </footer>
 </main>
 
 <dialog id="dlgAyuda">
   <div class="dlg">
-    <img src="logo_pin.png" alt="" onerror="this.remove()">
+    <img src="logo_jib.png" alt="" onerror="this.remove()">
     <h3>Cómo se usa</h3>
-    <div class="p"><span class="num">1</span><div><b>Cartera sugerida</b><p>Tocá «Elegir PDF» y abrí el informe de cartera que te manda PIN.</p></div></div>
+    <div class="p"><span class="num">1</span><div><b>Cartera sugerida</b><p>Tocá «Elegir PDF» y abrí el informe de cartera sugerida que te manda tu broker.</p></div></div>
     <div class="p"><span class="num">2</span><div><b>Tu cartera hoy</b><p>Sacá una captura de tu Portfolio en la app del broker y elegila con «Elegir captura(s)». Si no entra todo, sacá varias.</p></div></div>
     <div class="p"><span class="num">3</span><div><b>Cuánto invertís</b><p>Escribí el monto, elegí «Solo comprar» o «Comprar y vender» y tocá CALCULAR.</p></div></div>
     <div class="p"><span class="num">✓</span><div><b>Qué hacer</b><p>Te muestra cuántos papeles comprar o vender de cada uno. Compartilo o copialo y cargalo en tu broker.</p></div></div>
     <p class="nota">Tip: agregala a la pantalla de inicio (menú del navegador → «Agregar a pantalla de inicio») y se abre como una app.</p>
-    <p class="nota">Herramienta independiente, no oficial de PIN Capital. No es una recomendación de inversión. Revisá precios y cantidades en tu broker antes de confirmar.<br><b style="color:var(--azul)">Desarrollada por Ignacio Burd</b></p>
+    <p class="nota">Herramienta independiente, sin relación con ningún broker. No es una recomendación de inversión. Revisá precios y cantidades en tu broker antes de confirmar.<br><b style="color:var(--azul)">Desarrollada por Ignacio Burd</b></p>
     <button class="btn" id="btnCerrarAyuda" style="width:100%">Entendido</button>
   </div>
 </dialog>
